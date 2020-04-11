@@ -1,0 +1,33 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Player/Player.tscn" type="PackedScene" id=1]
+[ext_resource path="res://World.gd" type="Script" id=2]
+[ext_resource path="res://Rock/Rock.tscn" type="PackedScene" id=3]
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource( 2 )
+
+[node name="Player" parent="." instance=ExtResource( 1 )]
+position = Vector2( 484.076, 210.959 )
+
+[node name="Rock" parent="." instance=ExtResource( 3 )]
+position = Vector2( 259.787, 385.431 )
+Type = 0
+
+[node name="Rock5" parent="." instance=ExtResource( 3 )]
+position = Vector2( 689.018, 418.636 )
+rotation = 0.96207
+Type = 0
+
+[node name="Rock2" parent="." instance=ExtResource( 3 )]
+position = Vector2( 718.983, 335.22 )
+rotation = -1.2474
+Type = 2
+
+[node name="Rock4" parent="." instance=ExtResource( 3 )]
+position = Vector2( 605.601, 155.429 )
+Type = 2
+
+[node name="Rock3" parent="." instance=ExtResource( 3 )]
+position = Vector2( 315.668, 159.478 )
+rotation = -1.21087
