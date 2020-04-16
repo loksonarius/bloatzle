@@ -9,6 +9,7 @@ const AIM_CURSOR_DIST = 40
 onready var Sprite = $Sprite
 onready var Body = $Body
 onready var Aim = $AimPointer
+onready var Hookshot = $Hookshot
 
 var vel = Vector2.ZERO
 var input_vel = Vector2.ZERO
@@ -20,6 +21,11 @@ func _input(event):
 		aim = (mouse_pos - position).normalized()
 		Aim.look_at(mouse_pos)
 		Aim.position = aim * AIM_CURSOR_DIST
+	if event.is_action_pressed("ui_accept") || (event is InputEventMouseButton && event.is_pressed()):
+		if Hookshot.hooked:
+			Hookshot.release()
+		else:
+			Hookshot.shoot(aim)
 
 func update_input():
 	var x_dis = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
