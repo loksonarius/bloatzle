@@ -1,9 +1,10 @@
 extends KinematicBody2D
 
-const MAX_SPEED = 300
+const MAX_SPEED = 1500
 const MIN_SPEED = 10
+const MAX_INPUT_SPEED = 300
 const ACCELERATION = 2
-const YANK_SPEED = 200
+const YANK_SPEED = 500
 const FRICTION = 0.98
 const AIM_CURSOR_DIST = 40
 
@@ -50,7 +51,15 @@ func _physics_process(_delta):
 	if input_vel.length_squared() == 0.0:
 		apply_friction()
 	else:
-		apply_acceleration(input_vel * ACCELERATION)
+		var curr_speed = vel.length()
+		var accel = input_vel * ACCELERATION
+		var sum = vel + accel
+		if sum.length() > MAX_INPUT_SPEED:
+			print("clamping")
+			vel = sum.clamped(curr_speed)
+		else:
+			vel = sum
+		print(vel)
 		
 	if vel.length_squared() != 0.0 && Hookshot.taught:
 		apply_rope_pull()
@@ -59,6 +68,7 @@ func _physics_process(_delta):
 		vel += hook_yank
 		hook_yank = Vector2.ZERO
 		
+	vel = vel.clamped(MAX_SPEED)
 	vel = move_and_slide(vel)
 
 func apply_friction():
@@ -66,10 +76,6 @@ func apply_friction():
 		vel *= FRICTION
 	else:
 		vel = Vector2.ZERO
-
-func apply_acceleration(accel):
-	vel += accel
-	vel = vel.clamped(MAX_SPEED)
 
 func apply_rope_pull():
 	var pull = Hookshot.tip - position
