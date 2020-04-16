@@ -75,8 +75,5 @@ func apply_rope_pull():
 	var pull = Hookshot.tip - position
 	var angle = vel.angle_to(pull)
 	
-	print(rad2deg(angle))
 	if abs(angle) >= PI / 2.0:
-		print("pulling")
-		print(pull)
 		vel -= vel.project(pull)
