@@ -3,6 +3,7 @@ extends KinematicBody2D
 const MAX_SPEED = 300
 const MIN_SPEED = 10
 const ACCELERATION = 2
+const YANK_SPEED = 200
 const FRICTION = 0.98
 const AIM_CURSOR_DIST = 40
 
@@ -12,6 +13,8 @@ onready var Aim = $AimPointer
 onready var Hookshot = $Hookshot
 
 var vel = Vector2.ZERO
+var taught = false
+var hook_yank = Vector2.ZERO
 var input_vel = Vector2.ZERO
 var aim = Vector2.ZERO
 
@@ -23,6 +26,8 @@ func _input(event):
 		Aim.position = aim * AIM_CURSOR_DIST
 	if event.is_action_pressed("ui_accept") || (event is InputEventMouseButton && event.is_pressed()):
 		if Hookshot.hooked:
+			var pull = Hookshot.tip - position
+			hook_yank = pull.normalized() * YANK_SPEED
 			Hookshot.release()
 		else:
 			Hookshot.shoot(aim)
@@ -47,6 +52,13 @@ func _physics_process(_delta):
 	else:
 		apply_acceleration(input_vel * ACCELERATION)
 		
+	if vel.length_squared() != 0.0 && Hookshot.taught:
+		apply_rope_pull()
+		
+	if hook_yank.length_squared() != 0.0:
+		vel += hook_yank
+		hook_yank = Vector2.ZERO
+		
 	vel = move_and_slide(vel)
 
 func apply_friction():
@@ -58,3 +70,13 @@ func apply_friction():
 func apply_acceleration(accel):
 	vel += accel
 	vel = vel.clamped(MAX_SPEED)
+
+func apply_rope_pull():
+	var pull = Hookshot.tip - position
+	var angle = vel.angle_to(pull)
+	
+	print(rad2deg(angle))
+	if abs(angle) >= PI / 2.0:
+		print("pulling")
+		print(pull)
+		vel -= vel.project(pull)
